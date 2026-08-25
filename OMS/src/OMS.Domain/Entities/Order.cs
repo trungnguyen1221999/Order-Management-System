@@ -21,7 +21,7 @@ namespace OMS.Domain.Entities
         private Order()
         { }
 
-        public Order Create(Guid customerId, Address shippingAddress)
+        public static Order Create(Guid customerId, Address shippingAddress)
         {
             ArgumentException.ThrowIfNullOrEmpty(customerId.ToString());
             return new Order

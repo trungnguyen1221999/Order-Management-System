@@ -6,5 +6,7 @@
     <Project Path="src/OMS.Infrastructure/OMS.Infrastructure.csproj" />
     <Project Path="src/OMS.WebAPI/OMS.WebAPI.csproj" />
   </Folder>
-  <Folder Name="/test/" />
+  <Folder Name="/test/">
+    <Project Path="test/tests/OMS.Test.csproj" />
+  </Folder>
 </Solution>
