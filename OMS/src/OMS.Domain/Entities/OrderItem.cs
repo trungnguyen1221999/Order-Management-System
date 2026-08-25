@@ -1,4 +1,5 @@
 ﻿using OMS.Domain.Common;
+using OMS.Domain.Common.Interfaces;
 using OMS.Domain.ValueObjects;
 
 namespace OMS.Domain.Entities
@@ -15,8 +16,7 @@ namespace OMS.Domain.Entities
 
         public Money Subtotal => UnitPrice.Multiply(Quantity);
 
-        private OrderItem()
-        { }
+        private OrderItem() { }
 
         internal static OrderItem Create(
             Guid orderId,

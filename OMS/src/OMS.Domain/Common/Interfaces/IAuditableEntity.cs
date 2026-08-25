@@ -1,4 +1,4 @@
-﻿namespace OMS.Domain.Common
+﻿namespace OMS.Domain.Common.Interfaces
 {
     public interface IAuditableEntity
     {

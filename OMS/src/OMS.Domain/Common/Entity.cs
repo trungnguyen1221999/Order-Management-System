@@ -1,8 +1,13 @@
-﻿namespace OMS.Domain.Common
+﻿using OMS.Domain.Common.Interfaces;
+
+namespace OMS.Domain.Common
 {
     public abstract class Entity
     {
         public Guid Id { get; protected set; }
+        private List<IDomainEvent> _domainEvents = new();
+
+        public IReadOnlyList<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
         protected Entity()
         { }
@@ -30,5 +35,16 @@
         public static bool operator !=(Entity? left, Entity? right) => !(left == right);
 
         public override int GetHashCode() => HashCode.Combine(GetType(), Id);
+
+        //Domain Event method
+        protected void RaiseDomainEvent(IDomainEvent Event)
+        {
+            _domainEvents.Add(Event);
+        }
+
+        public void ClearDomainEvents()
+        {
+            _domainEvents.Clear();
+        }
     }
 }
