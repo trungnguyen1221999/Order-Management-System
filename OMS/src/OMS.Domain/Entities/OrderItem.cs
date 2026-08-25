@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OMS.Domain.Common;
+﻿using OMS.Domain.Common;
 using OMS.Domain.ValueObjects;
 
 namespace OMS.Domain.Entities
@@ -29,6 +26,11 @@ namespace OMS.Domain.Entities
             int quantity
         )
         {
+            if (quantity <= 0)
+                throw new DomainException("Quantity must be greater than 0");
+            if (unitPrice.Amount <= 0)
+                throw new DomainException("Price must be greater than 0");
+
             return new OrderItem
             {
                 Id = Guid.NewGuid(),
@@ -40,11 +42,18 @@ namespace OMS.Domain.Entities
             };
         }
 
-        internal void IncreaseQuantity(int qnt)
+        internal void IncreaseQuantity(int addQuantity)
         {
-            if (qnt < 0)
+            if (addQuantity < 0)
                 throw new DomainException("Can not Add negative quantity");
-            Quantity += qnt;
+            Quantity += addQuantity;
+        }
+
+        internal void UpdateQuantity(int newQuantity)
+        {
+            if (newQuantity <= 0)
+                throw new DomainException("Quantity must be greater than 0");
+            Quantity = newQuantity;
         }
     }
 }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OMS.Domain.ValueObjects
+﻿namespace OMS.Domain.ValueObjects
 {
     public sealed record PhoneNumber(string Value)
     {
