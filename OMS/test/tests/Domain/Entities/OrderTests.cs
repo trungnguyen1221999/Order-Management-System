@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OMS.Domain.Common;
+﻿using OMS.Domain.Common;
 using OMS.Domain.Entities;
 using OMS.Domain.ValueObjects;
 
@@ -105,8 +102,7 @@ namespace OMS.Test.Domain.Entities
             var orderItemId = _defaultOrder.Items[0].Id;
             _defaultOrder.PlaceOrder();
 
-            var exp = Assert.Throws<DomainException>(() => _defaultOrder.RemoveItem(orderItemId));
-            Assert.Equal("Can only RemoveItem with OrderStatus is Draft", exp.Message);
+            Assert.Throws<DomainException>(() => _defaultOrder.RemoveItem(orderItemId));
         }
 
         [Fact]

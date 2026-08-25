@@ -1,5 +1,8 @@
 <Solution>
-  <Folder Name="/docs/" />
+  <Folder Name="/docs/">
+    <File Path="docs/2.1 - Entity and Value Object.docx" />
+    <File Path="docs/2.2 - Aggregate and Aggregate Root.docx" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/OMS.Application/OMS.Application.csproj" />
     <Project Path="src/OMS.Domain/OMS.Domain.csproj" />

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OMS.Domain.ValueObjects;
+﻿using OMS.Domain.ValueObjects;
 
 namespace OMS.Test.Domain.ValueObjects
 {

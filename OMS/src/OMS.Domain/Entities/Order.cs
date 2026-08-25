@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using OMS.Domain.Common;
+﻿using OMS.Domain.Common;
 using OMS.Domain.ValueObjects;
 
 namespace OMS.Domain.Entities
@@ -12,11 +9,16 @@ namespace OMS.Domain.Entities
 
         public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
         public Guid CustomerId { get; private set; }
-        public Money TotalAmount { get; private set; } = null!;
         public Address ShippingAddress { get; private set; } = null!;
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public OrderStatus Status { get; private set; }
+
+        public Money TotalAmount =>
+            new Money(
+                _items.Sum(i => i.Subtotal.Amount),
+                _items.FirstOrDefault()?.UnitPrice.Currency ?? "EUR"
+            );
 
         private Order()
         { }
@@ -24,11 +26,13 @@ namespace OMS.Domain.Entities
         public static Order Create(Guid customerId, Address shippingAddress)
         {
             ArgumentException.ThrowIfNullOrEmpty(customerId.ToString());
+            if (shippingAddress is null)
+                throw new DomainException("Shipping address cannot be null");
+
             return new Order
             {
                 Id = Guid.NewGuid(),
                 CustomerId = customerId,
-                TotalAmount = Money.Zero("EUR"),
                 ShippingAddress = shippingAddress,
                 Status = OrderStatus.Draft,
                 CreatedAt = DateTime.UtcNow,
@@ -38,6 +42,8 @@ namespace OMS.Domain.Entities
         // Business method
         public void AddItem(Guid productId, string productName, Money unitPrice, int quantity)
         {
+            EnsureOrderIsModifiable();
+
             ArgumentException.ThrowIfNullOrEmpty(productId.ToString());
             ArgumentException.ThrowIfNullOrEmpty(productName);
 
@@ -62,21 +68,20 @@ namespace OMS.Domain.Entities
                 );
                 _items.Add(newOrderItem);
             }
-            RecalculateTotal();
         }
 
         public void RemoveItem(Guid orderItemId)
         {
-            ArgumentException.ThrowIfNullOrEmpty(orderItemId.ToString());
+            EnsureOrderIsModifiable();
             if (Status != OrderStatus.Draft)
                 throw new DomainException("Can only RemoveItem with OrderStatus is Draft");
+            ArgumentException.ThrowIfNullOrEmpty(orderItemId.ToString());
             var existingItem = _items.FirstOrDefault(i => i.Id == orderItemId);
             if (existingItem == null)
             {
                 throw new DomainException($"OrderItem {orderItemId} not found .");
             }
             _items.Remove(existingItem);
-            RecalculateTotal();
         }
 
         public void PlaceOrder()
@@ -99,12 +104,10 @@ namespace OMS.Domain.Entities
             ShippingAddress = newAddress;
         }
 
-        private void RecalculateTotal()
+        private void EnsureOrderIsModifiable()
         {
-            TotalAmount = _items.Aggregate(
-                Money.Zero("EUR"),
-                (sum, item) => sum.Add(item.Subtotal)
-            );
+            if (Status is OrderStatus.Shipped or OrderStatus.Cancelled)
+                throw new DomainException($"Can not modify Order with status {Status}");
         }
     }
 

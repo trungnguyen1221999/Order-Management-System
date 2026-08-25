@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace OMS.Domain.Common
+﻿namespace OMS.Domain.Common
 {
     public abstract class Entity
     {

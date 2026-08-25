@@ -1,5 +1,4 @@
-﻿using System;
-using OMS.Domain.Common;
+﻿using OMS.Domain.Common;
 
 namespace OMS.Domain.ValueObjects
 {

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace OMS.Domain.Common
+﻿namespace OMS.Domain.Common
 {
     public class DomainException : Exception
     {
