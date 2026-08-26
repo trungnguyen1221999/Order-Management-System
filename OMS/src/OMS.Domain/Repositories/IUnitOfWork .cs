@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace OMS.Domain.Common.Interfaces
+namespace OMS.Domain.Repositories
 {
-    public interface IUnitOfWork
+    public interface IUnitOfWork : IDisposable
     {
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 

@@ -3,6 +3,7 @@
     <File Path="docs/2.1 - Entity and Value Object.docx" />
     <File Path="docs/2.2 - Aggregate and Aggregate Root.docx" />
     <File Path="docs/2.3 - Domain Event.docx" />
+    <File Path="docs/2.4 - Repository Interface.docx" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/OMS.Application/OMS.Application.csproj" />

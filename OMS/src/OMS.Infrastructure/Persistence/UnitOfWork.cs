@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using OMS.Application.Common.Interfaces;
 using OMS.Domain.Common;
-using OMS.Domain.Common.Interfaces;
+using OMS.Domain.Repositories;
 
 namespace OMS.Infrastructure.Persistence
 {
@@ -29,6 +29,11 @@ namespace OMS.Infrastructure.Persistence
         public Task CommitTransactionAsync(CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();
+        }
+
+        public void Dispose()
+        {
+            _dbContext.Dispose();
         }
 
         public Task RollbackTransactionAsync(CancellationToken cancellationToken = default)
