@@ -1,4 +1,7 @@
-﻿using OMS.Domain.Common;
+﻿using System.Runtime.CompilerServices;
+using OMS.Domain.Common;
+using OMS.Domain.Common.Interfaces;
+using OMS.Domain.Events;
 using OMS.Domain.ValueObjects;
 
 namespace OMS.Domain.Entities
@@ -9,7 +12,10 @@ namespace OMS.Domain.Entities
 
         public IReadOnlyList<OrderItem> Items => _items.AsReadOnly();
         public Guid CustomerId { get; private set; }
+
+        public Email CustomerEmail { get; private set; } = null!;
         public Address ShippingAddress { get; private set; } = null!;
+
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
         public OrderStatus Status { get; private set; }
@@ -37,6 +43,58 @@ namespace OMS.Domain.Entities
                 Status = OrderStatus.Draft,
                 CreatedAt = DateTime.UtcNow,
             };
+        }
+
+        public static Order Create(Guid customerId, Address shippingAddress, List<OrderItem> items)
+        {
+            ArgumentException.ThrowIfNullOrEmpty(customerId.ToString());
+            if (shippingAddress is null)
+                throw new DomainException("Shipping address cannot be null");
+            var order = new Order
+            {
+                Id = Guid.NewGuid(),
+                CustomerId = customerId,
+                ShippingAddress = shippingAddress,
+                Status = OrderStatus.Draft,
+                CreatedAt = DateTime.UtcNow,
+            };
+            foreach (var item in items)
+            {
+                order.AddItem(item.ProductId, item.ProductName, item.UnitPrice, item.Quantity);
+            }
+            var orderPlacedEvent = new OrderPlacedEvent
+            {
+                OrderId = order.Id,
+                CustomerId = customerId,
+                CustomerEmail = order.CustomerEmail,
+                TotalAmount = order.TotalAmount,
+                Items = order
+                    ._items.Select(i => new OrderItemSnapshot(
+                        i.ProductId,
+                        i.ProductName,
+                        i.Quantity,
+                        i.UnitPrice
+                    ))
+                    .ToList(),
+            };
+            order.RaiseDomainEvent(orderPlacedEvent);
+            return order;
+        }
+
+        public void Ship(string trackingNumber, DateTime estimatedDelivery)
+        {
+            if (Status != OrderStatus.Confirmed)
+                throw new DomainException("Only a confirmed order can be shipped");
+            Status = OrderStatus.Shipped;
+            var orderShippedEvent = new OrderShippedEvent
+            {
+                OrderId = Id,
+                CustomerEmail = CustomerEmail,
+                CustomerId = CustomerId,
+                EstimatedDelivery = estimatedDelivery,
+                TrackingNumber = trackingNumber,
+            };
+            RaiseDomainEvent(orderShippedEvent);
         }
 
         // Business method

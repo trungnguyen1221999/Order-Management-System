@@ -1,5 +1,6 @@
 ﻿using OMS.Domain.Common;
 using OMS.Domain.Entities;
+using OMS.Domain.Events;
 using OMS.Domain.ValueObjects;
 
 namespace OMS.Test.Domain.Entities
@@ -7,6 +8,19 @@ namespace OMS.Test.Domain.Entities
     public class OrderTests
     {
         private readonly Order _defaultOrder = Order.Create(Guid.NewGuid(), CreateAddress());
+
+        private static List<OrderItem> CreateOrderItemsList()
+        {
+            var temp = Order.Create(Guid.NewGuid(), CreateAddress());
+            temp.AddItem(Guid.NewGuid(), "Product D", Money.Create(1000, "EUR"), 5);
+            return temp.Items.ToList();
+        }
+
+        private readonly Order _orderWithRaiseEvent = Order.Create(
+            Guid.NewGuid(),
+            CreateAddress(),
+            CreateOrderItemsList()
+        );
 
         private static Address CreateAddress(
             string street = "123 Test St",
@@ -165,6 +179,17 @@ namespace OMS.Test.Domain.Entities
             _defaultOrder.UpdateShippingAddress(newAddress);
 
             Assert.Equal(newAddress, _defaultOrder.ShippingAddress);
+        }
+
+        [Fact]
+        public void Order_Create_ShouldRaiseOrderPlacedEvent()
+        {
+            var domainEvent = (OrderPlacedEvent)_orderWithRaiseEvent.DomainEvents[0];
+            //Assert
+            Assert.Equal(_orderWithRaiseEvent.Id, domainEvent.OrderId);
+            Assert.Equal(_orderWithRaiseEvent.CustomerEmail, domainEvent.CustomerEmail);
+            Assert.Equal(_orderWithRaiseEvent.CustomerId, domainEvent.CustomerId);
+            Assert.Equal(_orderWithRaiseEvent.TotalAmount, domainEvent.TotalAmount);
         }
     }
 }
