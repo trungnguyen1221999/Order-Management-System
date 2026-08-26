@@ -13,10 +13,12 @@ namespace OMS.Domain.Entities
         public int Quantity { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
+        public Product Product { get; private set; } = null!;
 
         public Money Subtotal => UnitPrice.Multiply(Quantity);
 
-        private OrderItem() { }
+        private OrderItem()
+        { }
 
         internal static OrderItem Create(
             Guid orderId,
