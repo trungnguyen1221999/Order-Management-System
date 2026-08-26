@@ -4,6 +4,7 @@
     <File Path="docs/2.2 - Aggregate and Aggregate Root.docx" />
     <File Path="docs/2.3 - Domain Event.docx" />
     <File Path="docs/2.4 - Repository Interface.docx" />
+    <File Path="docs/2.5 - Domain Service and Specification Pattern.docx" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/OMS.Application/OMS.Application.csproj" />
