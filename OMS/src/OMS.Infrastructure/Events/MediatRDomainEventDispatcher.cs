@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using MediatR;
+using OMS.Application.Common;
 using OMS.Application.Common.Interfaces;
 using OMS.Domain.Common;
 using OMS.Domain.Common.Interfaces;
@@ -22,11 +23,11 @@ namespace OMS.Infrastructure.Events
             CancellationToken cancellationToken = default
         )
         {
+            var domainEvents = entities.SelectMany(e => e.DomainEvents).ToList();
             foreach (var entity in entities)
             {
                 entity.ClearDomainEvents();
             }
-            var domainEvents = entities.SelectMany(e => e.DomainEvents).ToList();
             foreach (var domainEvent in domainEvents)
             {
                 var notificationType = typeof(DomainEventNotification<>).MakeGenericType(
@@ -37,9 +38,4 @@ namespace OMS.Infrastructure.Events
             }
         }
     }
-
-    // Wrapper that bridges IDomainEvent to INotification
-    public sealed record DomainEventNotification<TDomainEvent>(TDomainEvent DomainEvent)
-        : INotification
-        where TDomainEvent : IDomainEvent;
 }

@@ -64,7 +64,7 @@ namespace OMS.Domain.Entities
             }
             var orderPlacedEvent = new OrderPlacedEvent
             {
-                OrderId = Guid.NewGuid(),
+                OrderId = order.Id,
                 CustomerId = customerId,
                 CustomerEmail = order.CustomerEmail,
                 TotalAmount = order.TotalAmount,
